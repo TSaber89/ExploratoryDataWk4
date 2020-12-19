@@ -1,5 +1,5 @@
-## Exploratory Data Analysis Week 4 Question 4
-## Across the United States, how have emissions from coal combustion-related sources changed from 1999-2008? 
+## Exploratory Data Analysis Week 4 Question 5
+## How many emissions from motor vehicle sources changed from 199 - 2008? 
 
 ## myNEI = SummarySCC_PM25   This file contains a data frame
 ## with all of the PM2.5 emissions data for 1999, 2002, 2005, and 2008. 
@@ -13,21 +13,26 @@
 myNEI <- readRDS("summarySCC_PM25.rds")
 mySCC <- readRDS("Source_Classification_Code.rds")
 
+##Find Baltimore motor vehicles
 
-## Find all records that are coal related.
-myCoalclass <- mySCC[grepl("Coal",mySCC$Short.Name),]
-myCoalEmissions <-myNEI[myNEI$SCC %in% myCoalclass$SCC,]
+myBaltimoreMV <- subset(myNEI,myNEI$fips=="24510"  & myNEI$type=="ON-ROAD")
+myBaltimoreMVyear <- aggregate(myBaltimoreMV$Emissions,by=list(myBaltimoreMV$year),FUN=sum)
+colnames(myBaltimoreMVyear) <- c("year","Emissions")
 
-myCoalEmissionsYear <- aggregate(myCoalEmissions$Emissions, by=list(myCoalEmissions$year),FUN=sum)
-colnames(myCoalEmissionsYear) <- c("Year","Emissions")
 
 ##Create the plot
-png(filename = "./plot4.png")
-plot(myCoalEmissionsYear$Year,myCoalEmissionsYear$Emissions,type="o",
-     xlab = "Year", ylab = "Total Emissions (Tons)",
-     main = "Coal RElated Emissions of PM2.5 in US from 1999-2008")
+png(filename = "./plot5.png")
+plot(myBaltimoreMVyear,myBaltimoreMVyear,type="o",
+     xlab= "Year", ylab="Total Emissions (Tons)",
+     main = "Total Emissions of PM2.5 related to motor vehicles", sub="Baltimore City")
 
 dev.off()
+
+
+
+
+
+
 
                        
 
